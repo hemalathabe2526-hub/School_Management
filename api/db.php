@@ -161,13 +161,17 @@ if (isset($conn)) {
 }
 
 // Ensure cookies are valid across the whole site (important when using Vercel rewrites)
+$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => '',
-    'secure' => true,
+    'domain' => $_SERVER['HTTP_HOST'] ?? '',
+    'secure' => $secure,
     'httponly' => true,
-    'samesite' => 'Lax',
+    // Use None for cross-site support when HTTPS is enabled (Vercel uses HTTPS)
+    'samesite' => $secure ? 'None' : 'Lax',
 ]);
 
 // Start session if not started

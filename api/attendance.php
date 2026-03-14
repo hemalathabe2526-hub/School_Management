@@ -5,6 +5,14 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// Debug helper: visit /attendance.php?debug=1 to see session info
+if (isset($_GET['debug']) && $_GET['debug'] == '1') {
+    echo '<pre style="background:#000;color:#0f0;padding:10px;">';
+    echo "Session ID: " . session_id() . "\n\n";
+    echo htmlspecialchars(print_r($_SESSION, true));
+    echo '</pre>';
+}
+
 // Create attendance table if not exists
 $conn->query("CREATE TABLE IF NOT EXISTS attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
