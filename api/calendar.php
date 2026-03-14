@@ -1,7 +1,7 @@
 <?php
 include 'db.php';
 
-$sql = "SELECT name, dob FROM students WHERE dob IS NOT NULL AND dob != ''";
+$sql = "SELECT name, dob FROM students WHERE dob IS NOT NULL AND dob > '0000-00-00'";
 $result = $conn->query($sql);
 $birthdays = [];
 while ($row = $result->fetch_assoc()) {
