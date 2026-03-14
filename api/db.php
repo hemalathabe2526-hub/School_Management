@@ -43,9 +43,11 @@ $conn->query("CREATE TABLE IF NOT EXISTS students (
     blood_group VARCHAR(5),
     emergency_contact VARCHAR(100),
     medical_info TEXT,
-    photo VARCHAR(255),
+    photo LONGTEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )");
+// Ensure existing table has LONGTEXT for Base64 support
+$conn->query("ALTER TABLE students MODIFY COLUMN photo LONGTEXT");
 
 $conn->query("CREATE TABLE IF NOT EXISTS attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,

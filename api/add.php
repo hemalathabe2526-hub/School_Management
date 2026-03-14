@@ -16,13 +16,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $photo = '';
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-        $target_dir = "uploads/";
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0777, true);
-        }
-        $target_file = $target_dir . basename($_FILES["photo"]["name"]);
-        move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file);
-        $photo = $target_file;
+        $img_type = $_FILES['photo']['type'];
+        $img_data = file_get_contents($_FILES['photo']['tmp_name']);
+        // Store as data URI
+        $photo = 'data:' . $img_type . ';base64,' . base64_encode($img_data);
     }
 
     $sql = "INSERT INTO students (name, email, phone, address, dob, grade, parent_name, parent_phone, blood_group, emergency_contact, medical_info, photo) VALUES ('$name', '$email', '$phone', '$address', '$dob', '$grade', '$parent_name', '$parent_phone', '$blood_group', '$emergency_contact', '$medical_info', '$photo')";
