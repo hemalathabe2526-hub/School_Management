@@ -1,10 +1,9 @@
 <?php
-session_start();
+include 'db.php';
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-include 'db.php';
 
 // Get attendance statistics
 $sql_stats = "SELECT 

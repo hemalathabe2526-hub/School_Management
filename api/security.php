@@ -172,11 +172,13 @@ function setupSessionSecurity() {
         $_SESSION['CREATED'] = time();
     }
     
-    // Regenerate session ID periodically
+    // Regenerate session ID periodically (Disabled for Vercel stability)
+    /*
     if (time() - $_SESSION['CREATED'] > SESSION_TIMEOUT) {
         session_regenerate_id(true);
         $_SESSION['CREATED'] = time();
     }
+    */
     
     // Verify session hasn't been hijacked
     $user_agent = sha1($_SERVER['HTTP_USER_AGENT']);

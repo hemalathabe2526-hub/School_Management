@@ -1,10 +1,9 @@
 <?php
-session_start();
+include 'db.php';
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-include 'db.php';
 
 // Create attendance table if not exists
 $conn->query("CREATE TABLE IF NOT EXISTS attendance (

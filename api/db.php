@@ -96,11 +96,72 @@ if ($check->num_rows == 0) {
         FOREIGN KEY (sent_by) REFERENCES users(id)
     )");
 
+    // Create sessions table for serverless persistence
+    $conn->query("CREATE TABLE IF NOT EXISTS sessions (
+        id VARCHAR(128) PRIMARY KEY,
+        data TEXT,
+        last_access TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )");
+
     // Create default admin: admin / password
     $admin_check = $conn->query("SELECT id FROM users WHERE username = 'admin'");
     if ($admin_check->num_rows == 0) {
         $hashed_pass = password_hash('password', PASSWORD_DEFAULT);
         $conn->query("INSERT INTO users (username, password, role) VALUES ('admin', '$hashed_pass', 'admin')");
     }
+}
+
+/**
+ * Custom Session Handler for Vercel (Database-backed)
+ */
+class DBSessionHandler implements SessionHandlerInterface {
+    private $db;
+
+    public function __construct($db) {
+        $this->db = $db;
+    }
+
+    public function open($path, $name): bool { return true; }
+    public function close(): bool { return true; }
+
+    public function read($id): string {
+        $stmt = $this->db->prepare("SELECT data FROM sessions WHERE id = ?");
+        $stmt->bind_param("s", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            return $row['data'];
+        }
+        return "";
+    }
+
+    public function write($id, $data): bool {
+        $stmt = $this->db->prepare("REPLACE INTO sessions (id, data) VALUES (?, ?)");
+        $stmt->bind_param("ss", $id, $data);
+        return $stmt->execute();
+    }
+
+    public function destroy($id): bool {
+        $stmt = $this->db->prepare("DELETE FROM sessions WHERE id = ?");
+        $stmt->bind_param("s", $id);
+        return $stmt->execute();
+    }
+
+    public function gc($max_lifetime): int|false {
+        $stmt = $this->db->prepare("DELETE FROM sessions WHERE last_access < DATE_SUB(NOW(), INTERVAL ? SECOND)");
+        $stmt->bind_param("i", $max_lifetime);
+        return $stmt->execute() ? 1 : false;
+    }
+}
+
+// Start the session with the custom handler
+if (isset($conn)) {
+    $handler = new DBSessionHandler($conn);
+    session_set_save_handler($handler, true);
+}
+
+// Start session if not started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 ?>

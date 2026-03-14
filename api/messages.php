@@ -1,10 +1,9 @@
 <?php
-session_start();
+include 'db.php';
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-include 'db.php';
 
 $user_id = $_SESSION['user_id'];
 
