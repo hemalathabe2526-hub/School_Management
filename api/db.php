@@ -14,7 +14,14 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Auto-initialize tables if students table is missing
+// Ensure sessions table exists for serverless persistence (important for Vercel)
+$conn->query("CREATE TABLE IF NOT EXISTS sessions (
+    id VARCHAR(128) PRIMARY KEY,
+    data TEXT,
+    last_access TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)");
+
+// Auto-initialize other tables if students table is missing
 $check = $conn->query("SHOW TABLES LIKE 'students'");
 if ($check->num_rows == 0) {
     // Create users table
@@ -94,13 +101,6 @@ if ($check->num_rows == 0) {
         sent_by INT,
         sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (sent_by) REFERENCES users(id)
-    )");
-
-    // Create sessions table for serverless persistence
-    $conn->query("CREATE TABLE IF NOT EXISTS sessions (
-        id VARCHAR(128) PRIMARY KEY,
-        data TEXT,
-        last_access TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )");
 
     // Create default admin: admin / password
