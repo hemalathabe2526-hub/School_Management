@@ -126,9 +126,18 @@ class DBSessionHandler implements SessionHandlerInterface {
     }
 
     public function write($id, $data): bool {
-        $stmt = $this->db->prepare("REPLACE INTO sessions (id, data) VALUES (?, ?)");
-        $stmt->bind_param("ss", $id, $data);
-        return $stmt->execute();
+        // Prevent writing if the database connection is already closed or hasn't been established
+        if (!($this->db instanceof mysqli) || $this->db->connect_errno) {
+            return false;
+        }
+        try {
+            $stmt = @$this->db->prepare("REPLACE INTO sessions (id, data) VALUES (?, ?)");
+            if (!$stmt) return false;
+            $stmt->bind_param("ss", $id, $data);
+            return $stmt->execute();
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     public function destroy($id): bool {
@@ -168,4 +177,10 @@ session_set_cookie_params([
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+/**
+ * CRITICAL: Ensure session is written BEFORE the database connection is closed.
+ * This prevents "mysqli object is already closed" errors during PHP shutdown.
+ */
+register_shutdown_function('session_write_close');
 ?>

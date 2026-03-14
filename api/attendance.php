@@ -158,5 +158,5 @@ $result = $stmt->get_result();
 </html>
 
 <?php
-$conn->close();
+
 ?>

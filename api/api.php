@@ -32,5 +32,5 @@ switch ($action) {
         echo json_encode(['error' => 'Invalid action']);
 }
 
-$conn->close();
+
 ?>

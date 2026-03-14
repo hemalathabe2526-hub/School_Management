@@ -138,5 +138,5 @@ $result_recent = $conn->query($sql_recent);
 </html>
 
 <?php
-$conn->close();
+
 ?>

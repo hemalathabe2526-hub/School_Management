@@ -124,5 +124,5 @@ echo "Sample students added.<br>";
 echo "Database setup completed successfully!<br>";
 echo "<a href='index.php'>Go to Home</a>";
 
-$conn->close();
+
 ?>

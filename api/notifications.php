@@ -158,5 +158,5 @@ $result_notifications = $conn->query($sql_notifications);
 </html>
 
 <?php
-$conn->close();
+
 ?>

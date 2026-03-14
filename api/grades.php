@@ -197,5 +197,5 @@ $result_students = $conn->query($sql_students);
 </html>
 
 <?php
-$conn->close();
+
 ?>
