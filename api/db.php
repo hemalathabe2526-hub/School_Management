@@ -160,6 +160,16 @@ if (isset($conn)) {
     session_set_save_handler($handler, true);
 }
 
+// Ensure cookies are valid across the whole site (important when using Vercel rewrites)
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => '',
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
