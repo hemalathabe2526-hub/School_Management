@@ -45,6 +45,57 @@ if ($check->num_rows == 0) {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )");
 
+    // Create attendance table
+    $conn->query("CREATE TABLE IF NOT EXISTS attendance (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        student_id INT,
+        date DATE,
+        status ENUM('present', 'absent', 'late'),
+        notes TEXT,
+        recorded_by INT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+        FOREIGN KEY (recorded_by) REFERENCES users(id)
+    )");
+
+    // Create grades table
+    $conn->query("CREATE TABLE IF NOT EXISTS grades (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        student_id INT,
+        subject VARCHAR(100),
+        grade VARCHAR(10),
+        semester VARCHAR(50),
+        year YEAR,
+        teacher_id INT,
+        comments TEXT,
+        date_recorded DATE,
+        FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+        FOREIGN KEY (teacher_id) REFERENCES users(id)
+    )");
+
+    // Create messages table
+    $conn->query("CREATE TABLE IF NOT EXISTS messages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        sender_id INT,
+        receiver_id INT,
+        message TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (sender_id) REFERENCES users(id),
+        FOREIGN KEY (receiver_id) REFERENCES users(id)
+    )");
+
+    // Create notifications table
+    $conn->query("CREATE TABLE IF NOT EXISTS notifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255),
+        message TEXT,
+        recipient_type ENUM('all', 'students', 'parents', 'staff'),
+        recipient_ids TEXT,
+        sent_by INT,
+        sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (sent_by) REFERENCES users(id)
+    )");
+
     // Create default admin: admin / password
     $admin_check = $conn->query("SELECT id FROM users WHERE username = 'admin'");
     if ($admin_check->num_rows == 0) {

@@ -6,6 +6,10 @@
   },
   "routes": [
     { "src": "/(styles\\.css|script\\.js)", "dest": "/$1" },
+    { "src": "/api/(attendance|grades|notifications|calendar|messages|export|dashboard|login|logout|add|edit|delete|api)\\.php", "dest": "/api/$1.php" },
+    { "src": "/(attendance|grades|notifications|calendar|messages|export|dashboard|login|logout|add|edit|delete|api)\\.php", "dest": "/api/$1.php" },
+    { "src": "/api/?$", "dest": "/api/index.php" },
+    { "src": "/$", "dest": "/api/index.php" },
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/(.*)", "dest": "/api/$1" }
   ]
