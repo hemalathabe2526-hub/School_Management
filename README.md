@@ -112,6 +112,9 @@ For production deployment, consider using Apache/Nginx with PHP-FPM.
 ## Future Enhancements
 
 - Email integration for notifications
+- AI Integration
+- Chat Support
+- Voice Action
 - SMS alerts for parents
 - Advanced reporting and analytics
 - Mobile app companion
