@@ -26,6 +26,10 @@ A comprehensive PHP and MySQL based system for managing student records, attenda
 - Attendance reports with charts
 - Grade tracking by semester and year
 
+  ## Live Project View
+
+  https://school-management-blush-five.vercel.app/
+
 ## Setup
 
 1. **Install PHP and MySQL**
